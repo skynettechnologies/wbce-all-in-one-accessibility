@@ -3,7 +3,7 @@
 $module_directory = 'all_in_one_accessibility';
 $module_name = 'All in One Accessibility';
 $module_function = 'snippet,tool';
-$module_version = '1.0';
+$module_version = '1.1';
 $module_platform = '1.x';
 $module_author = 'Skynet Technologies USA LLC';
 $module_license = 'MIT';

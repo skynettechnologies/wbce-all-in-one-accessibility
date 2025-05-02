@@ -1,3 +1,4 @@
+//load ADA js on fronted side
 function load_aioa_script() {
     let scriptEle = document.createElement("script");
   
