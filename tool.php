@@ -1,6 +1,38 @@
 <?php
+$ip = $_SERVER['REMOTE_ADDR'];
+
+// Handle proxy / VPN / Cloudflare
+if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+    $ip = trim(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0]);
+}
 
 
+if ($ip === '127.0.0.1' || $ip === '::1') {
+    $apiUrl = "https://ipwho.is/";
+} else {
+    $apiUrl = "https://ipwho.is/" . trim($ip);
+}
+
+$ch = curl_init($apiUrl);
+curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_SSL_VERIFYPEER => false,
+    CURLOPT_TIMEOUT => 5,
+]);
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+$data = json_decode($response, true);
+
+if (!empty($data) && isset($data['is_eu'])) {
+    // true = 0 (EU), false = 1 (Non-EU)
+    $isEU = $data['is_eu'] ? 0 : 1;
+} else {
+    // Default fallback (Non-EU)
+    $isEU = 1;
+}
+// var_dump($data['is_eu'] ? 0 : 1);
 
 //Add User Detail ADA dashboard
 
@@ -31,8 +63,11 @@ function fetchApiData($domain, $username, $email)
     'post_code' => '',
     'transaction_id' => '',
     'subscr_id' => '',
-    'payment_source' => ''
+    'payment_source' => '',
+    'no_required_eu' => $isEU,
   ];
+
+
 
   $apiUrl = "https://ada.skynettechnologies.us/api/get-autologin-link";
 
